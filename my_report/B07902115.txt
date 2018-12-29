@@ -1,0 +1,13 @@
+select T.character_name from time_table T where T.planet_name='Endor' AND T.movie=3;
+select COUNT(distinct T.planet_name) from time_table T where T.character_name='Luke Skywalker' and T.movie=2;
+select C.name from characters C, time_table T where C.name=T.character_name and C.homeworld=T.planet_name and T.movie=3;
+select distinct T.character_name from time_table T where T.character_name not in (select T2.character_name from time_table T2, planets P where T2.planet_name=P.name and P.affiliation='empire');
+select distinct T.planet_name from time_table T where T.character_name in (select C.name from characters C where C.race='Human' and C.affiliation='rebels');
+select T.character_name, sum(T.time_of_departure - T.time_of_arrival) from time_table T group by T.character_name;
+select C.name from characters C where C.homeworld != 'Unknown' and C.affiliation = 'rebels' and race = 'Human';
+SELECT distinct T.planet_name, T.movie FROM time_table T, time_table T2 WHERE T2.character_name IN (SELECT C.name FROM characters C WHERE C.race = 'human' AND C.name != 'Luke Skywalker') AND T.character_name = 'Luke Skywalker' AND T.time_of_arrival < T2.time_of_departure AND T2.time_of_arrival < T.time_of_departure AND T.movie = T2.movie AND T.planet_name = T2.planet_name;
+SELECT T.movie, T.character_name, COUNT(T.planet_name) AS 'planets visited' FROM time_table T GROUP BY T.movie, T.character_name HAVING COUNT(T.planet_name) >= ALL (SELECT COUNT(T3.planet_name) FROM time_table T3 WHERE T.movie = T3.movie GROUP BY T3.movie, T3.character_name);
+SELECT T.planet_name FROM time_table T WHERE T.character_name IN ( SELECT C.name FROM characters C  WHERE C.race = 'droid' ) GROUP BY T.planet_name HAVING SUM(T.time_of_departure - T.time_of_arrival) >= ALL(SELECT SUM(T2.time_of_departure - T2.time_of_arrival)  FROM time_table T2 WHERE T2.character_name IN (SELECT C2.name FROM characters C2 WHERE C2.race = 'droid') GROUP BY T2.planet_name);
+SELECT P.name FROM planets P WHERE P.name NOT IN (SELECT T.planet_name FROM time_table T);
+SELECT T.movie, T.planet_name FROM time_table T WHERE T.character_name='Luke Skywalker' AND (T.time_of_departure - T.time_of_arrival) = (SELECT MAX(T2.time_of_departure - T2.time_of_arrival) FROM time_table T2, characters C2, planets P2 WHERE T2.character_name='Luke Skywalker' AND C2.name='Luke Skywalker' AND P2.name=T2.planet_name AND P2.affiliation!=C2.affiliation AND T.movie=T2.movie GROUP BY T2.movie);
+SELECT T.character_name FROM time_table T, time_table T2 WHERE T.planet_name='Dagobah' AND T2.planet_name='Dagobah' AND T.character_name!='Luke Skywalker' AND T2.character_name='Luke Skywalker' AND T.movie=T2.movie AND T.time_of_departure>T2.time_of_departure;
